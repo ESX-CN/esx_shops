@@ -16,6 +16,9 @@ local LastZone                = nil
 local CurrentAction           = nil
 local CurrentActionMsg        = ''
 local CurrentActionData       = {}
+--npclife,don't change this
+local generalLoaded 		  = false
+local PlayingAnimDance 		  = false
 
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -41,6 +44,12 @@ function OpenShopMenu(zone)
 			item.limit = 100
 		end
 
+		if Config.Locale == 'zh' then
+			item.label = item.label_zh
+		elseif Config.Locale == 'cn' then
+			item.label = item.label_cn
+		end
+		
 		table.insert(elements, {
 			label      = ('%s - <span style="color:green;">%s</span>'):format(item.label, _U('shop_item', ESX.Math.GroupDigits(item.price))),
 			label_real = item.label,
@@ -118,7 +127,7 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(0)
-		local coords = GetEntityCoords(GetPlayerPed(-1))
+		local coords = GetEntityCoords(PlayerPedId())
 
 		for k,v in pairs(Config.Zones) do
 			for i = 1, #v.Pos, 1 do
@@ -134,7 +143,7 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(10)
-		local coords      = GetEntityCoords(GetPlayerPed(-1))
+		local coords      = GetEntityCoords(PlayerPedId())
 		local isInMarker  = false
 		local currentZone = nil
 
@@ -177,5 +186,93 @@ Citizen.CreateThread(function()
 		else
 			Citizen.Wait(500)
 		end
+	end
+end)
+
+-- Spawn NPC
+Citizen.CreateThread(function()
+     while true do
+        Citizen.Wait(0)
+  
+        if (not generalLoaded) then
+
+    		for k,v in pairs(Config.Zones) do
+				for i = 1, #v.Npc, 1 do
+	                RequestModel(GetHashKey(v.Npc[i].modelHash))
+	                while not HasModelLoaded(GetHashKey(v.Npc[i].modelHash)) do
+	                    Wait(1)
+	                end
+
+	                v.Npc[i].id = CreatePed(2, v.Npc[i].modelHash, v.Npc[i].x, v.Npc[i].y, v.Npc[i].z, v.Npc[i].heading, true, true)
+	                SetPedFleeAttributes(v.Npc[i].id, 0, 0)
+	                SetAmbientVoiceName(v.Npc[i].id, v.Npc[i].Ambiance)
+	                SetPedDropsWeaponsWhenDead(v.Npc[i].id, false)
+	                SetPedDiesWhenInjured(v.Npc[i].id, false)
+	                GiveWeaponToPed(v.Npc[i].id, v.Npc[i].Weapon, 2800, false, true)
+	            
+				end
+			end
+
+            generalLoaded = true
+        end
+    end
+end)
+
+-- Action when player Near NPC (or not)
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+        RequestAnimDict("amb@world_human_guard_patrol@male@idle_a")
+        while (not HasAnimDictLoaded("amb@world_human_guard_patrol@male@idle_a")) do 
+            Citizen.Wait(0) 
+        end
+
+        RequestAnimDict("random@shop_clothes@mid")
+        while (not HasAnimDictLoaded("random@shop_clothes@mid")) do 
+            Citizen.Wait(0) 
+        end
+
+		for k,v in pairs(Config.Zones) do
+	        for i=1, #v.Npc do
+	            distance = GetDistanceBetweenCoords(v.Npc[i].x, v.Npc[i].y, v.Npc[i].z, GetEntityCoords(PlayerPedId()))
+	            if distance < 4 and PlayingAnimDance ~= true then
+	                TaskPlayAnim(v.Npc[i].id,"random@shop_gunstore","_greeting", 1.0, -1.0, 4000, 0, 1, true, true, true)
+	                PlayAmbientSpeech1(v.Npc[i].id, v.Npc[i].VoiceName, "SPEECH_PARAMS_FORCE", 1)
+	                PlayingAnimDance = true
+	                Citizen.Wait(4000)
+	                if PlayingAnimDance == true then
+	                    TaskPlayAnim(v.Npc[i].id,"random@shop_gunstore","_idle_b", 1.0, -1.0, -1, 0, 1, true, true, true)
+	                    Citizen.Wait(40000)
+	                end
+	            else
+	            --don't touch this
+	            --TaskPlayAnim(v.Npc[i].id,"random@shop_gunstore","_idle", 1.0, -1.0, -1, 0, 1, true, true, true)
+	            end
+	            if distance > 5.5 and distance < 6 then
+	                PlayingAnimDance = false
+	            end
+	        end
+	    end
+    end
+end)
+
+RegisterNetEvent('esx:showShopNotification')
+AddEventHandler('esx:showShopNotification', function(msg)
+	ESX.ShowNotification(_U(msg))
+end)
+
+RegisterNetEvent('esx:showShopNotification1')
+AddEventHandler('esx:showShopNotification1', function(msg,var1)
+	ESX.ShowNotification(_U(msg,var1))
+end)
+
+RegisterNetEvent('esx:showShopNotification3')
+AddEventHandler('esx:showShopNotification3', function(msg,var1,var2,var3,var4,var5)
+	if Config.Locale == 'zh' then 
+		ESX.ShowNotification(_U(msg,var1,var4,var5))
+	elseif Config.Locale == 'cn' then 
+		ESX.ShowNotification(_U(msg,var1,var3,var5))
+	else
+		ESX.ShowNotification(_U(msg,var1,var2,var5))
 	end
 end)
