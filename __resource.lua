@@ -11,7 +11,8 @@ client_scripts {
 	'locales/zh.lua',
 	'config.lua',
 	'@es_extended/i18n.lua',
-	'client/main.lua'
+	'client/main.lua',
+	'client/npc.lua'
 }
 
 server_scripts {
