@@ -1,29 +1,32 @@
 # esx_shops
 
-## Download & Installation
+## 说明
+- 这个插件不适用于官方ESX
+- 这是基于魔改版修改的版本
+- 如有使用问题请添加qq群：208486207
+- 点击链接加入群【FiveM中文网官方群】：https://jq.qq.com/?_wv=1027&k=5BOQycm
 
-### Using [fvm](https://github.com/qlaffont/fvm-installer)
-```
-fvm install --save --folder=esx esx-org/esx_shops
-```
+## 下载 & 安装
 
-### Using Git
+### 使用 Git
 ```
 cd resources
-git clone https://github.com/ESX-Org/esx_shops [esx]/esx_shops
+git clone https://github.com/ESX-CN/esx_shops [esx]/esx_shops
 ```
 
-### Manually
-- Download https://github.com/ESX-Org/esx_shops/archive/master.zip
-- Put it in the `[esx]` directory
+### 手动
+- 下载 https://github.com/ESX-CN/esx_shops/archive/master.zip
+- 解压至 `[esx]` 文件夹
 
-## Installation
-- Import `esx_shops.sql` to your database
-- Add this in your `server.cfg`:
+## 安装
+- 导入 `esx_shops.sql` 文件至你的数据库
+- 添加这条至你的 `server.cfg`:
 
 ```
 start esx_shops
 ```
+## 更新记录
+- [2018-12-14] 修改自适应魔改版，删除无用语言，保留英文，汉化简繁。添加NPC(手里有枪，悠着点)
 
 # Legal
 ### License
