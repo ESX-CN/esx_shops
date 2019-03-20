@@ -139,7 +139,7 @@ end)
 -- Enter / Exit marker events
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(10)
+		Citizen.Wait(0)
 		local coords      = GetEntityCoords(PlayerPedId())
 		local isInMarker  = false
 		local currentZone = nil
@@ -168,7 +168,7 @@ end)
 -- Key Controls
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(10)
+		Citizen.Wait(0)
 
 		if CurrentAction ~= nil then
 			ESX.ShowHelpNotification(CurrentActionMsg)
