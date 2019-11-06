@@ -1,4 +1,4 @@
-Locales['zh'] = {
+Locales['tc'] = {
   ['shop'] = '商店',
   ['shops'] = '商店',
   ['press_menu'] = '按 ~INPUT_CONTEXT~ ~y~訪問商店~s~',
